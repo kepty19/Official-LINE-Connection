@@ -96,7 +96,7 @@
 
         async function start() {
             var msg = document.getElementById('msg');
-            msg.innerText = "接続中...";
+            msg.innerText = "Loading...";
 
             try {
                 await liff.init({ liffId: LIFF_ID });
@@ -108,7 +108,7 @@
                 var cleanBaseUrl = BASE_URL.replace(/\s/g, "");
                 var finalUrl = cleanBaseUrl + "?userId=" + encodeURIComponent(userId);
 
-                msg.innerText = "データを照合中...";
+                msg.innerText = "Verifying data...";
 
                 var xhr = new XMLHttpRequest();
                 xhr.open("GET", finalUrl, true);
@@ -117,7 +117,7 @@
                         if (xhr.status === 200) {
                             var response = JSON.parse(xhr.responseText);
                             if (response.url) {
-                                msg.innerText = "ページへ移動します...";
+                                msg.innerText = "Redirecting...";
                                 window.location.href = response.url;
                             } else {
                                 alert("ユーザーIDが見つかりませんでした。");
