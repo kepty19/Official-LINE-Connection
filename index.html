@@ -1,140 +1,140 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kepty English</title>
-    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-    <style>
-        /* 修正点1: 背景を真っ白に */
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #ffffff; /* 真っ白 */
-            color: #333333; /* テキスト色を黒系に */
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kepty English</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        /* 1. 背景を真っ白に修正 */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #ffffff; /* ホワイト */
+            color: #333333;
+        }
 
-        .container {
-            text-align: center;
-            width: 85%;
-            max-width: 380px;
-        }
+        .container {
+            text-align: center;
+            width: 85%;
+            max-width: 380px;
+        }
 
-        /* 修正点4: ロゴを丸い枠に */
-        .logo-container {
-            display: inline-block;
-            padding: 20px; /* 余白を追加 */
-            border-radius: 50%; /* 丸くする */
-            background-color: #ffffff; /* ロゴの周りを白く */
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* 高級感を出す */
-            margin-bottom: 30px;
-        }
+        /* 4. ロゴを丸い枠で表示 */
+        .logo-wrapper {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 30px auto;
+            border-radius: 50%; /* 正円にする */
+            overflow: hidden; /* 枠からはみ出た画像を隠す */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #ffffff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* 軽い影で浮かせる */
+        }
 
-        .logo {
-            width: 180px;
-            height: auto;
-            display: block; /* 余白除去 */
-        }
+        .logo {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
 
-        /* プレミアムマットオレンジのボタン */
-        .btn {
-            /* 修正点3: 添付の色をコピーし、高級感のあるグラデーションを追加 */
-            background: linear-gradient(to bottom, #f15b22, #e0511f); /* 高級感を出すための微妙なグラデーション */
-            color: white;
-            border: none;
-            padding: 20px 0;
-            /* 修正点2: 角を丸くスタイリッシュに */
-            border-radius: 50px; /* 丸みを帯びた角 */
-            font-size: 18px;
-            font-weight: bold;
-            width: 100%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            letter-spacing: 0.05em;
-        }
+        /* 2 & 3. ボタンの形状（丸み）とプレミアムマットオレンジ（グラデーション） */
+        .btn {
+            /* スクリーンショットの色味を再現したグラデーション */
+            background: linear-gradient(135deg, #f15b22 0%, #d14d1a 100%);
+            color: white;
+            border: none;
+            padding: 20px 0;
+            border-radius: 50px; /* 角をさらに丸くスタイリッシュに */
+            font-size: 18px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(241, 91, 34, 0.3);
+            letter-spacing: 0.05em;
+        }
 
-        .btn:active {
-            transform: scale(0.97);
-            background: linear-gradient(to bottom, #e0511f, #c7481c); /* 押した時に少し暗く */
-        }
+        .btn:active {
+            transform: scale(0.97);
+            filter: brightness(0.9); /* 押した時に少し暗く */
+        }
 
-        /* 頑張りましょうのテキスト */
-        #msg {
-            margin-top: 30px;
-            font-size: 14px;
-            color: #666666; /* 背景が白なので少し濃いグレーに */
-            letter-spacing: 0.05em;
-        }
-    </style>
+        /* メッセージのテキスト色調整（白背景用） */
+        #msg {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #666666;
+            letter-spacing: 0.05em;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="container">
-        /* 修正点4: ロゴをコンテナで囲む */
-        <div class="logo-container">
-            <img src="logo v2.png" alt="Kepty" class="logo">
-        </div>
-        
-        <button class="btn" onclick="start()">Webアプリを開く</button>
-        
-        <p id="msg">英語のトレーニング 頑張りましょう</p>
-    </div>
+    <div class="container">
+        <div class="logo-wrapper">
+            <img src="logo v2.png" alt="Kepty" class="logo">
+        </div>
+        
+        <button class="btn" onclick="start()">Webアプリを開く</button>
+        
+        <p id="msg">英語のトレーニング 頑張りましょう</p>
+    </div>
 
-    <script>
-        // ★重要1：ここに自分のGASのURLを正確に貼り付ける
-        var BASE_URL = "https://script.google.com/macros/s/AKfycbyRxPJu4bkJ3qAscLqOHOuz9thCelzffkikBLYHtHuWcKqpXTYHxpWvIlGH0522R-KjdA/exec";
+    <script>
+        // 固定ロック済みのURLとID
+        var BASE_URL = "https://script.google.com/macros/s/AKfycbyRxPJu4bkJ3qAscLqOHOuz9thCelzffkikBLYHtHuWcKqpXTYHxpWvIlGH0522R-KjdA/exec";
+        var LIFF_ID = "2009159043-2ePS5qcs";
 
-        // ★重要2：ここに自分のLIFF IDを貼り付ける
-        var LIFF_ID = "2009159043-2ePS5qcs";
+        async function start() {
+            var msg = document.getElementById('msg');
+            msg.innerText = "接続中...";
 
-        async function start() {
-            var msg = document.getElementById('msg');
-            msg.innerText = "接続中...";
+            try {
+                await liff.init({ liffId: LIFF_ID });
+                if (!liff.isLoggedIn()) { liff.login(); return; }
 
-            try {
-                await liff.init({ liffId: LIFF_ID });
-                if (!liff.isLoggedIn()) { liff.login(); return; }
+                var profile = await liff.getProfile();
+                var userId = profile.userId;
 
-                var profile = await liff.getProfile();
-                var userId = profile.userId;
+                var cleanBaseUrl = BASE_URL.replace(/\s/g, "");
+                var finalUrl = cleanBaseUrl + "?userId=" + encodeURIComponent(userId);
 
-                var cleanBaseUrl = BASE_URL.replace(/\s/g, "");
-                var finalUrl = cleanBaseUrl + "?userId=" + encodeURIComponent(userId);
+                msg.innerText = "データを照合中...";
 
-                msg.innerText = "データを照合中...";
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", finalUrl, true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.url) {
+                                msg.innerText = "ページへ移動します...";
+                                window.location.href = response.url;
+                            } else {
+                                alert("ユーザーIDが見つかりませんでした。");
+                                msg.innerText = "ID未登録";
+                            }
+                        } else {
+                            alert("通信エラーが発生しました。");
+                            msg.innerText = "通信失敗";
+                        }
+                    }
+                };
+                xhr.send();
 
-                var xhr = new XMLHttpRequest();
-                xhr.open("GET", finalUrl, true);
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 200) {
-                            var response = JSON.parse(xhr.responseText);
-                            if (response.url) {
-                                msg.innerText = "ページへ移動します...";
-                                window.location.href = response.url;
-                            } else {
-                                alert("ユーザーIDが見つかりませんでした。");
-                                msg.innerText = "ID未登録";
-1.                            }
-1.                      } else {
-1.                          alert("通信エラーが発生しました。");
-1.                          msg.innerText = "通信失敗";
-1.                      }
-1.                  }
-1.              };
-1.              xhr.send();
-
-1.          } catch (err) {
-1.              alert("エラー: " + err.message);
-1.              msg.innerText = "エラー停止";
-1.          }
-1.       }
-1.   </script>
+            } catch (err) {
+                alert("エラー: " + err.message);
+                msg.innerText = "エラー停止";
+            }
+        }
+    </script>
 </body>
 </html>
