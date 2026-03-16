@@ -1,29 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kepty English</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #fff; }
-        .btn { background: #00b900; color: white; border: none; padding: 18px 40px; border-radius: 50px; font-size: 18px; font-weight: bold; width: 80%; cursor: pointer; }
-        #msg { margin-top: 20px; font-size: 12px; color: #888; }
+        /* ラグジュアリーな背景設定 */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #1a1a1a; /* マットブラック */
+            color: #ffffff;
+        }
+
+        .container {
+            text-align: center;
+            width: 85%;
+            max-width: 380px;
+        }
+
+        /* ロゴのスタイル */
+        .logo {
+            width: 180px; /* サイズは適宜調整してください */
+            height: auto;
+            margin-bottom: 30px;
+        }
+
+        /* プレミアムマットオレンジのボタン */
+        .btn {
+            background-color: #d17a3a; /* プレミアムマットオレンジ */
+            color: white;
+            border: none;
+            padding: 20px 0;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            letter-spacing: 0.05em;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+            background-color: #b0652e; /* 押した時に少し暗く */
+        }
+
+        /* 頑張りましょうのテキスト */
+        #msg {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #a0a0a0;
+            letter-spacing: 0.05em;
+        }
     </style>
 </head>
 <body>
-    <button class="btn" onclick="start()">ページを開く</button>
-    <p id="msg">ボタンを押して開始してください</p>
+
+    <div class="container">
+        <img src="logo v2.png" alt="Kepty" class="logo">
+        
+        <button class="btn" onclick="start()">Webアプリを開く</button>
+        
+        <p id="msg">英語のトレーニング 頑張りましょう</p>
+    </div>
 
     <script>
-        // ==========================================
-        // 1. ここに自分のGASの「/exec」URLを貼り付ける
-        // ==========================================
+        // ★重要1：ここに自分のGASのURLを正確に貼り付ける
         var BASE_URL = "https://script.google.com/macros/s/AKfycbyRxPJu4bkJ3qAscLqOHOuz9thCelzffkikBLYHtHuWcKqpXTYHxpWvIlGH0522R-KjdA/exec";
 
-        // ==========================================
-        // 2. ここに自分のLIFF IDを貼り付ける
-        // ==========================================
+        // ★重要2：ここに自分のLIFF IDを貼り付ける
         var LIFF_ID = "2009159043-2ePS5qcs";
 
         async function start() {
@@ -37,7 +90,6 @@
                 var profile = await liff.getProfile();
                 var userId = profile.userId;
 
-                // URLのゴミを掃除
                 var cleanBaseUrl = BASE_URL.replace(/\s/g, "");
                 var finalUrl = cleanBaseUrl + "?userId=" + encodeURIComponent(userId);
 
@@ -53,10 +105,12 @@
                                 msg.innerText = "ページへ移動します...";
                                 window.location.href = response.url;
                             } else {
-                                alert("スプレッドシートにあなたのIDが見つかりませんでした。");
+                                alert("ユーザーIDが見つかりませんでした。");
+                                msg.innerText = "ID未登録";
                             }
                         } else {
-                            alert("GASとの通信に失敗しました。URLが正しいか確認してください。");
+                            alert("通信エラーが発生しました。");
+                            msg.innerText = "通信失敗";
                         }
                     }
                 };
