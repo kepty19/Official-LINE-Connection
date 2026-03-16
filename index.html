@@ -3,66 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kepty Debug</title>
+    <title>Kepty English</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f0f0f0; }
-        .btn { background: #00b900; color: white; border: none; padding: 20px; border-radius: 10px; font-size: 18px; font-weight: bold; width: 80%; cursor: pointer; }
-        #debug-box { margin-top: 20px; width: 90%; font-size: 10px; background: #fff; border: 1px solid #ccc; padding: 10px; word-break: break-all; }
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #fff; }
+        .btn { background: #00b900; color: white; border: none; padding: 18px 40px; border-radius: 50px; font-size: 18px; font-weight: bold; width: 80%; cursor: pointer; }
+        #msg { margin-top: 20px; font-size: 12px; color: #888; }
     </style>
 </head>
 <body>
-    <button class="btn" onclick="start()">デバッグ開始</button>
-    <div id="debug-box">ログがここに表示されます</div>
+    <button class="btn" onclick="start()">ページを開く</button>
+    <p id="msg">ボタンを押して開始してください</p>
 
     <script>
-        // ★ここにGASのURLを貼り付けてください（前後のスペースに注意！）
-        var raw_url = "https://script.google.com/macros/s/AKfycbyRxPJu4bkJ3qAscLqOHOuz9thCelzffkikBLYHtHuWcKqpXTYHxpWvIlGH0522R-KjdA/exec";
+        // ==========================================
+        // 1. ここに自分のGASの「/exec」URLを貼り付ける
+        // ==========================================
+        var BASE_URL = "https://script.google.com/macros/s/AKfycbyRxPJu4bkJ3qAscLqOHOuz9thCelzffkikBLYHtHuWcKqpXTYHxpWvIlGH0522R-KjdA/exec";
+
+        // ==========================================
+        // 2. ここに自分のLIFF IDを貼り付ける
+        // ==========================================
         var LIFF_ID = "2009159043-2ePS5qcs";
 
-        function log(msg) { document.getElementById('debug-box').innerText += "\n> " + msg; }
-
         async function start() {
+            var msg = document.getElementById('msg');
+            msg.innerText = "接続中...";
+
             try {
-                // 1. URLのクレンジング（空白や改行を徹底排除）
-                var clean_url = raw_url.trim().replace(/\s/g, "");
-                log("使用するURL: " + clean_url);
-
-                if (!clean_url.startsWith("https://")) {
-                    alert("エラー: URLが https:// で始まっていません。");
-                    return;
-                }
-
-                log("LIFF初期化中...");
                 await liff.init({ liffId: LIFF_ID });
                 if (!liff.isLoggedIn()) { liff.login(); return; }
 
-                log("プロフィール取得中...");
                 var profile = await liff.getProfile();
-                
-                // 2. 通信URL作成
-                var final_url = clean_url + "?userId=" + encodeURIComponent(profile.userId);
-                log("最終通信URL: " + final_url);
+                var userId = profile.userId;
 
-                // 3. 通信実行（ここがエラーの発生地点）
-                log("fetch開始...");
-                var response = await fetch(final_url);
-                
-                log("レスポンス取得完了");
-                var data = await response.json();
-                
-                if (data.url) {
-                    log("成功：移動します");
-                    window.location.replace(data.url);
-                } else {
-                    log("失敗：URLが含まれていません");
-                }
+                // URLのゴミを掃除
+                var cleanBaseUrl = BASE_URL.replace(/\s/g, "");
+                var finalUrl = cleanBaseUrl + "?userId=" + encodeURIComponent(userId);
+
+                msg.innerText = "データを照合中...";
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("GET", finalUrl, true);
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            var response = JSON.parse(xhr.responseText);
+                            if (response.url) {
+                                msg.innerText = "ページへ移動します...";
+                                window.location.href = response.url;
+                            } else {
+                                alert("スプレッドシートにあなたのIDが見つかりませんでした。");
+                            }
+                        } else {
+                            alert("GASとの通信に失敗しました。URLが正しいか確認してください。");
+                        }
+                    }
+                };
+                xhr.send();
 
             } catch (err) {
-                log("!!! エラー発生 !!!");
-                log("Name: " + err.name);
-                log("Message: " + err.message);
-                alert("詳細エラー:\n" + err.name + ": " + err.message);
+                alert("エラー: " + err.message);
+                msg.innerText = "エラー停止";
             }
         }
     </script>
