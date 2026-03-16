@@ -3,67 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kepty English</title>
+    <title>Kepty Debug</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #fff; }
-        .btn { background: #00b900; color: white; border: none; padding: 18px 40px; border-radius: 50px; font-size: 18px; font-weight: bold; width: 80%; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        #msg { margin-top: 20px; font-size: 13px; color: #666; }
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f0f0f0; }
+        .btn { background: #00b900; color: white; border: none; padding: 20px; border-radius: 10px; font-size: 18px; font-weight: bold; width: 80%; cursor: pointer; }
+        #debug-box { margin-top: 20px; width: 90%; font-size: 10px; background: #fff; border: 1px solid #ccc; padding: 10px; word-break: break-all; }
     </style>
 </head>
 <body>
-    <button class="btn" onclick="start()">ページを開く</button>
-    <p id="msg">ボタンを押して開始してください</p>
+    <button class="btn" onclick="start()">デバッグ開始</button>
+    <div id="debug-box">ログがここに表示されます</div>
 
     <script>
-        // ★ここにGASのデプロイURL（末尾が /exec のもの）を正確に貼り付けてください
-        // 前後にスペースが入らないように注意！
-        var GAS_API_URL = "ここにGASのURLを貼り付け";
+        // ★ここにGASのURLを貼り付けてください（前後のスペースに注意！）
+        var raw_url = "https://script.google.com/macros/s/AKfycbyRxPJu4bkJ3qAscLqOHOuz9thCelzffkikBLYHtHuWcKqpXTYHxpWvIlGH0522R-KjdA/exec";
         var LIFF_ID = "2009159043-2ePS5qcs";
 
-        async function start() {
-            var msg = document.getElementById('msg');
-            msg.innerText = "接続中...";
+        function log(msg) { document.getElementById('debug-box').innerText += "\n> " + msg; }
 
+        async function start() {
             try {
-                // 1. LIFF初期化
-                await liff.init({ liffId: LIFF_ID });
-                if (!liff.isLoggedIn()) {
-                    liff.login();
+                // 1. URLのクレンジング（空白や改行を徹底排除）
+                var clean_url = raw_url.trim().replace(/\s/g, "");
+                log("使用するURL: " + clean_url);
+
+                if (!clean_url.startsWith("https://")) {
+                    alert("エラー: URLが https:// で始まっていません。");
                     return;
                 }
 
-                // 2. プロフィール取得
+                log("LIFF初期化中...");
+                await liff.init({ liffId: LIFF_ID });
+                if (!liff.isLoggedIn()) { liff.login(); return; }
+
+                log("プロフィール取得中...");
                 var profile = await liff.getProfile();
-                var uid = encodeURIComponent(profile.userId);
-
-                // 3. 通信URLの作成（エラー回避のため安全に結合）
-                var requestUrl = GAS_API_URL + "?userId=" + uid;
                 
-                msg.innerText = "データを照合中...";
+                // 2. 通信URL作成
+                var final_url = clean_url + "?userId=" + encodeURIComponent(profile.userId);
+                log("最終通信URL: " + final_url);
 
-                // 4. GASへ通信（CORSエラーを避けるため設定を追加）
-                var response = await fetch(requestUrl, {
-                    method: "GET",
-                    mode: "cors"
-                });
-
-                if (!response.ok) throw new Error("通信に失敗しました");
-
+                // 3. 通信実行（ここがエラーの発生地点）
+                log("fetch開始...");
+                var response = await fetch(final_url);
+                
+                log("レスポンス取得完了");
                 var data = await response.json();
                 
                 if (data.url) {
-                    msg.innerText = "ページへ移動します...";
+                    log("成功：移動します");
                     window.location.replace(data.url);
                 } else {
-                    throw new Error("URLが見つかりませんでした");
+                    log("失敗：URLが含まれていません");
                 }
 
             } catch (err) {
-                // エラー内容を詳しく表示
-                console.error(err);
-                alert("エラー: " + err.message + "\nURLを確認してください。");
-                msg.innerText = "エラーが発生しました";
+                log("!!! エラー発生 !!!");
+                log("Name: " + err.name);
+                log("Message: " + err.message);
+                alert("詳細エラー:\n" + err.name + ": " + err.message);
             }
         }
     </script>
