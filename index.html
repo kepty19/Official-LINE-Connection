@@ -6,7 +6,7 @@
     <title>Kepty English</title>
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
-        /* 1. 背景を真っ白に修正 */
+        /* デフォルトロック設定：背景ホワイト */
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
             display: flex;
@@ -15,7 +15,7 @@
             justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: #ffffff; /* ホワイト */
+            background-color: #ffffff;
             color: #333333;
         }
 
@@ -25,34 +25,36 @@
             max-width: 380px;
         }
 
-        /* 4. ロゴを丸い枠で表示 */
+        /* ロゴ枠のサイズは固定（150px） */
         .logo-wrapper {
             width: 150px;
             height: 150px;
             margin: 0 auto 30px auto;
-            border-radius: 50%; /* 正円にする */
-            overflow: hidden; /* 枠からはみ出た画像を隠す */
+            border-radius: 50%;
+            overflow: hidden; /* はみ出た部分をカットしてズームを実現 */
             display: flex;
             align-items: center;
             justify-content: center;
             background-color: #ffffff;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* 軽い影で浮かせる */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
+        /* ロゴ画像のズームアップ設定 */
         .logo {
             width: 100%;
             height: auto;
             display: block;
+            /* ★ここを調整することで、枠の中だけズームできます */
+            transform: scale(1.3); 
         }
 
-        /* 2 & 3. ボタンの形状（丸み）とプレミアムマットオレンジ（グラデーション） */
+        /* プレミアムマットオレンジ・カプセルボタン */
         .btn {
-            /* スクリーンショットの色味を再現したグラデーション */
             background: linear-gradient(135deg, #f15b22 0%, #d14d1a 100%);
             color: white;
             border: none;
             padding: 20px 0;
-            border-radius: 50px; /* 角をさらに丸くスタイリッシュに */
+            border-radius: 50px;
             font-size: 18px;
             font-weight: bold;
             width: 100%;
@@ -64,10 +66,9 @@
 
         .btn:active {
             transform: scale(0.97);
-            filter: brightness(0.9); /* 押した時に少し暗く */
+            filter: brightness(0.9);
         }
 
-        /* メッセージのテキスト色調整（白背景用） */
         #msg {
             margin-top: 30px;
             font-size: 14px;
@@ -89,7 +90,7 @@
     </div>
 
     <script>
-        // 固定ロック済みのURLとID
+        // デフォルトロック済みのURLとID（変更なし）
         var BASE_URL = "https://script.google.com/macros/s/AKfycbyRxPJu4bkJ3qAscLqOHOuz9thCelzffkikBLYHtHuWcKqpXTYHxpWvIlGH0522R-KjdA/exec";
         var LIFF_ID = "2009159043-2ePS5qcs";
 
