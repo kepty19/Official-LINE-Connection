@@ -7,35 +7,63 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #fff; }
-        .btn { background: #00b900; color: white; border: none; padding: 18px 40px; border-radius: 50px; font-size: 18px; font-weight: bold; width: 80%; cursor: pointer; }
+        .btn { background: #00b900; color: white; border: none; padding: 18px 40px; border-radius: 50px; font-size: 18px; font-weight: bold; width: 80%; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        #msg { margin-top: 20px; font-size: 13px; color: #666; }
     </style>
 </head>
 <body>
     <button class="btn" onclick="start()">ページを開く</button>
-    <p id="msg"></p>
+    <p id="msg">ボタンを押して開始してください</p>
 
     <script>
-        // ★ここに先ほどのGASの「/exec」URLを入れてください
-        const GAS_API_URL = "ここにGASのデプロイURLを貼り付け";
-        const LIFF_ID = "2009159043-2ePS5qcs";
+        // ★ここにGASのデプロイURL（末尾が /exec のもの）を正確に貼り付けてください
+        // 前後にスペースが入らないように注意！
+        var GAS_API_URL = "ここにGASのURLを貼り付け";
+        var LIFF_ID = "2009159043-2ePS5qcs";
 
         async function start() {
-            const msg = document.getElementById('msg');
+            var msg = document.getElementById('msg');
             msg.innerText = "接続中...";
-            try {
-                await liff.init({ liffId: LIFF_ID });
-                if (!liff.isLoggedIn()) { liff.login(); return; }
 
-                const profile = await liff.getProfile();
+            try {
+                // 1. LIFF初期化
+                await liff.init({ liffId: LIFF_ID });
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                    return;
+                }
+
+                // 2. プロフィール取得
+                var profile = await liff.getProfile();
+                var uid = encodeURIComponent(profile.userId);
+
+                // 3. 通信URLの作成（エラー回避のため安全に結合）
+                var requestUrl = GAS_API_URL + "?userId=" + uid;
                 
-                // GASのAPIを叩く（標準的なfetch通信なのでiPhoneでも止まりません）
-                const response = await fetch(`${GAS_API_URL}?userId=${profile.userId}`);
-                const data = await response.json();
+                msg.innerText = "データを照合中...";
+
+                // 4. GASへ通信（CORSエラーを避けるため設定を追加）
+                var response = await fetch(requestUrl, {
+                    method: "GET",
+                    mode: "cors"
+                });
+
+                if (!response.ok) throw new Error("通信に失敗しました");
+
+                var data = await response.json();
                 
-                msg.innerText = "ページへ移動します...";
-                window.location.replace(data.url);
+                if (data.url) {
+                    msg.innerText = "ページへ移動します...";
+                    window.location.replace(data.url);
+                } else {
+                    throw new Error("URLが見つかりませんでした");
+                }
+
             } catch (err) {
-                alert("エラー: " + err);
+                // エラー内容を詳しく表示
+                console.error(err);
+                alert("エラー: " + err.message + "\nURLを確認してください。");
+                msg.innerText = "エラーが発生しました";
             }
         }
     </script>
